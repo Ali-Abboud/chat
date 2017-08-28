@@ -12,7 +12,7 @@ var USERNAME_MONGO=process.env.MONGO_USERNAME || "username" ;
 var PASSWORD_MONGO=process.env.MONGO_PASSWORD || "password" ;
 
 //making the connections
-mongoose.connect('mongodb://'+USERNAME_MONGO+':'+PASSWORD_MONGO+'@'+MONGO_URL,function (error) {
+mongoose.connect(/*'mongodb://'+USERNAME_MONGO+':'+PASSWORD_MONGO+'@'+MONGO_URL*/"mongodb://userDC6:jVqRWG0f5osx4dQE@mongodb/sampledb",function (error) {
     if(error){console.log("error");}
     else{
 
