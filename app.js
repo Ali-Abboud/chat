@@ -48,6 +48,11 @@ app.get('/api',function(req,res){
  	res.json([{firstname:'john',lastname:'doe'}]);
  });
 
+ app.get('/',function(req,res){
+
+  	res.send("<h1>hello world</h1>");
+  });
+
 
 //checking if the number exist
 
@@ -70,7 +75,7 @@ app.post('/checkNumber',jsonParser,function (req,res,next) {
 
 
 	next();
-
+s
 });
 
 app.post('/register',jsonParser,function (req,res,next) {
