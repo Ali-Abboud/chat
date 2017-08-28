@@ -5,8 +5,14 @@ var    bodyParser = require('body-parser');
 var mongoose=require('mongoose');
 var jsonParser=bodyParser.json();
 
+var port=process.env.PORT_HTTP || 2999;
+var MONGO_URL=process.env.MONGO_URL || "127.0.0.1";
+var PORT_MONGO=process.env.MONGO_PORT || 27017 ;
+var USERNAME_MONGO=process.env.MONGO_USERNAME || "username" ;
+var PASSWORD_MONGO=process.env.MONGO_PASSWORD || "password" ;
+
 //making the connections
-mongoose.connect('mongodb://127.0.0.1:27017/db',function (error) {
+mongoose.connect('mongodb://'+USERNAME_MONGO+':'+PASSWORD_MONGO+'@'+MONGO_URL,function (error) {
     if(error){console.log("error");}
     else{
 
@@ -39,7 +45,7 @@ var Client=mongoose.model('client',clienctSchema);
  //using the exported function to create the server
  var app=express();
 // Port to be listened to
- var port=process.env.PORT || 2999;
+ 
 
 
 //just for test
