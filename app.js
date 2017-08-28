@@ -11,12 +11,13 @@ var PORT_MONGO=process.env.MONGO_PORT || 27017 ;
 var USERNAME_MONGO=process.env.MONGO_USERNAME || "username" ;
 var PASSWORD_MONGO=process.env.MONGO_PASSWORD || "password" ;
 
-//making the connections
-mongoose.connect(/*'mongodb://'+USERNAME_MONGO+':'+PASSWORD_MONGO+'@'+MONGO_URL*/"mongodb://userDC6:jVqRWG0f5osx4dQE@mongodb/sampledb",function (error) {
-    if(error){console.log("error");}
+//making the connections\
+/*'mongodb://'+USERNAME_MONGO+':'+PASSWORD_MONGO+'@'+MONGO_URL*/
+mongoose.connect("mongodb://userDC6:jVqRWG0f5osx4dQE@mongodb-chat-db.a3c1.starter-us-west-1.openshiftapps.com/sampledb",function (error) {
+    if(error){console.log("error and shit");}
     else{
 
-        console.log("connected!!");
+        console.log("connected!! ");
 
     }
 
