@@ -13,7 +13,7 @@ var PASSWORD_MONGO=process.env.MONGO_PASSWORD || "password" ;
 
 //making the connections\
 /*'mongodb://'+USERNAME_MONGO+':'+PASSWORD_MONGO+'@'+MONGO_URL*/
-mongoose.connect("mongodb://userDC6:jVqRWG0f5osx4dQE@mongodb-chat-db.a3c1.starter-us-west-1.openshiftapps.com/sampledb",function (error) {
+mongoose.connect("mongodb://userDC6:jVqRWG0f5osx4dQE@172.30.48.150/sampledb",function (error) {
     if(error){console.log("error and shit");}
     else{
 
