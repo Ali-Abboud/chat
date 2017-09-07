@@ -8,13 +8,13 @@ var jsonParser=bodyParser.json();
 var port=process.env.PORT_HTTP || 2999;
 var MONGO_URL=process.env.MONGO_URL || "127.0.0.1";
 var PORT_MONGO=process.env.MONGO_PORT || 27017 ;
-var USERNAME_MONGO=process.env.MONGO_USERNAME || "username" ;
-var PASSWORD_MONGO=process.env.MONGO_PASSWORD || "password" ;
+var USERNAME_MONGO=process.env.MONGODB_USER || "username" ;
+var PASSWORD_MONGO=process.env.MONGODB_PASSWORD || "password" ;
 
 //making the connections\
 /*'mongodb://'+USERNAME_MONGO+':'+PASSWORD_MONGO+'@'+MONGO_URL*/
 //mongodb://bintouch007:123456@ds129004.mlab.com:29004/bitdb
-mongoose.connect("mongodb://userNLJ:hLe2dS00s3MGpkMU@mongodb/sampledb",function (error) {
+mongoose.connect("mongodb://"+USERNAME_MONGO+":"+PASSWORD_MONGO+"@mongodb/sampledb",function (error) {
     if(error){console.log("error and shit");}
     else{
 
