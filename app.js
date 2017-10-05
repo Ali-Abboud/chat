@@ -25,7 +25,8 @@ mongoose.connect("mongodb://bintouch007:123456@ds129004.mlab.com:29004/bitdb@mon
 });
 
 
-//creating the shema for client document
+//creating the shema for documents
+
 var Schema=mongoose.Schema;
 var clienctSchema=new Schema({
 	phone_number:String,
@@ -36,10 +37,27 @@ var clienctSchema=new Schema({
 	password:String
 });
 var phoneChatSchema=new Schema({
-     chats:[]
+     rooms:[]
 
 });
+
+var message={
+  from:,
+  to:,
+  state:,
+  date:,
+  content:
+};
+
+var roomSchema=new Schema({
+  room_name:String,
+  participants:[],
+  chats:[]
+
+});
+
 var Client=mongoose.model('client',clienctSchema);
+var Room=mongoose.model('room',roomSchema);
 ////////////////////////////////////////
 
 
@@ -47,7 +65,7 @@ var Client=mongoose.model('client',clienctSchema);
  //using the exported function to create the server
  var app=express();
 // Port to be listened to
- 
+ var port=process.env.PORT || 2999;
 
 
 //just for test
@@ -55,11 +73,6 @@ app.get('/api',function(req,res){
 
  	res.json([{firstname:'john',lastname:'doe'}]);
  });
-
- app.get('/',function(req,res){
-
-  	res.send("<h1>hello world</h1>");
-  });
 
 
 //checking if the number exist
@@ -80,12 +93,9 @@ app.post('/checkNumber',jsonParser,function (req,res,next) {
 		}
 
 	});
-
-
-	next();
-s
 });
 
+//registering a given number
 app.post('/register',jsonParser,function (req,res,next) {
 
 	var data=req.body;
@@ -99,9 +109,6 @@ app.post('/register',jsonParser,function (req,res,next) {
 
 
 	 });
-
-
-
 
 	Client.find({"phone_number":data.phone_number},function(err,clients){
 		if(err) throw err;
@@ -232,7 +239,23 @@ app.post('/checkingContacts',jsonParser,function (req,res,next) {
 
 
 ////saving chatRooms//////////////////////////////////////////////////////////////////////////////////
+app.post("/saveRoom",jsonParser,function (req,res,next) {
+  var data=req.body;
+  var i=0;
+  while(i<data.rooms.length){
+    Room.find({"room_name":data.rooms[i]},function(err,room){
+      if(err) throw err;
+      else if(room.length==0){
+        var room=Room({
+          room_name:data.room_name,
+          participants:[data.contact[0],data.contact[1]]
+          chats:[]
+        });
+      }
 
+    });
+  }
+});
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 app.listen(port);
