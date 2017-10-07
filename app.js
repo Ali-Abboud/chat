@@ -246,24 +246,26 @@ app.post("/saveRoom",jsonParser,function(req,res,next){
     var data=req.body;
     var i=0;
 
-    while(i<data.rooms.length){
-      Room.find({"room_name":data.rooms[i]},function(err,room){
-        if(err) throw err;
 
-        else if(room.length==0){
-          var r=Room({
-              room_name:data.room_name,
-         participants:[data.contact[0],data.contact[1]],
-         chats:[]
-          });
-
-          console.log("room "+data.room_name+" saved!!");
-          res.json({message:"room "+data.room_name+" saved!!"});
-         }
-
-      });
-      i++;
-    }
+    console.log(data);
+    // while(i<data.rooms.length){
+    //   Room.find({"room_name":data.rooms[i]},function(err,room){
+    //     if(err) throw err;
+    //
+    //     else if(room.length==0){
+    //       var r=Room({
+    //           room_name:data.room_name,
+    //      participants:[data.contact[0],data.contact[1]],
+    //      chats:[]
+    //       });
+    //
+    //       console.log("room "+data.room_name+" saved!!");
+    //       res.json({message:"room "+data.room_name+" saved!!"});
+    //      }
+    //
+    //   });
+    //   i++;
+    // }
 });
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
