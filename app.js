@@ -246,7 +246,7 @@ app.post("/saveRoom",jsonParser,function(req,res,next){
     var data=req.body;
     var i=0;
 
-
+    res.json({message:"we are in"});
     console.log(data);
     // while(i<data.rooms.length){
     //   Room.find({"room_name":data.rooms[i]},function(err,room){
