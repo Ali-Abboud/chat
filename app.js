@@ -242,7 +242,7 @@ app.post('/checkingContacts',jsonParser,function (req,res,next) {
 ////saving chatRooms//////////////////////////////////////////////////////////////////////////////////
 
 
-app.post("/saveRoom",jsonParser,function(req,res,next){
+app.get("/saveRoom",jsonParser,function(req,res,next){
     var data=req.body;
     var i=0;
 
