@@ -258,6 +258,7 @@ app.post("/saveRoom",jsonParser,function(req,res,next){
           });
 
           console.log("room "+data.room_name+" saved!!");
+          res.json({message:"room "+data.room_name+" saved!!"});
          }
 
       });
