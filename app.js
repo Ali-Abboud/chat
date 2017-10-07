@@ -203,6 +203,7 @@ app.post('/checkingContacts',jsonParser,function (req,res,next) {
                        while(k<foundIndex.length){
                        	if(foundIndex[k]==data[i].phone_number){
                           found=1;
+
                           i++;
                           break;
                         }
@@ -239,24 +240,29 @@ app.post('/checkingContacts',jsonParser,function (req,res,next) {
 
 
 ////saving chatRooms//////////////////////////////////////////////////////////////////////////////////
-// app.post("/saveRoom",jsonParser,function (req,res,next) {
-//   var data=req.body;
-//   var i=0;
-//   while(i<data.rooms.length){
-//     Room.find({"room_name":data.rooms[i]},function(err,room){
-//       if(err) throw err;
-//       else if(room.length==0){
-//         var room=Room({
-//           room_name:data.room_name,
-//           participants:[data.contact[0],data.contact[1]]
-//           chats:[]
-//         });
-//       }
-//
-//     });
-//     i++;
-//   }
-// });
+
+
+app.post("/saveRoom",jsonParser,function(req,res,next){
+    var data=req.body;
+    var i=0;
+
+    while(i<data.rooms.length){
+      Room.find({"room_name":data.rooms[i]},function(err,room){
+        if(err) throw err;
+
+        else if(room.length==0){
+          var r=Room({
+              room_name:data.room_name,
+         participants:[data.contact[0],data.contact[1]],
+         chats:[]
+          });
+
+          console.log("room "+data.room_name+" saved!!");
+         }
+
+      });
+    }
+});
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 app.listen(port);
