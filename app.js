@@ -51,7 +51,7 @@ var phoneChatSchema=new Schema({
 
 var roomSchema=new Schema({
   room_name:String,
-  participants:[],
+//  participants:[],
   chats:[]
 
 });
@@ -240,33 +240,213 @@ app.post('/checkingContacts',jsonParser,function (req,res,next) {
 
 
 ////saving chatRooms//////////////////////////////////////////////////////////////////////////////////
-
-
-app.get("/saveRoom",jsonParser,function(req,res,next){
+app.post("/saveRoom",jsonParser,function(req,res,next){
     var data=req.body;
     var i=0;
-
-    res.json({message:"we are in"});
     console.log(data);
-    // while(i<data.rooms.length){
-    //   Room.find({"room_name":data.rooms[i]},function(err,room){
-    //     if(err) throw err;
-    //
-    //     else if(room.length==0){
-    //       var r=Room({
-    //           room_name:data.room_name,
-    //      participants:[data.contact[0],data.contact[1]],
-    //      chats:[]
-    //       });
-    //
-    //       console.log("room "+data.room_name+" saved!!");
-    //       res.json({message:"room "+data.room_name+" saved!!"});
-    //      }
-    //
-    //   });
-    //   i++;
-    // }
-});
-///////////////////////////////////////////////////////////////////////////////////////////////////
+    Room.find({},function(err,room){
+    	if(err) throw err;
+    	else if(room.length==0){//if the database is empty with no rooms
+    		for(var i=0;i<data.length;i++){
+    			var r=Room({
+    				room_name:data[i].room,
+    				chats:[]
+    			});
+    			r.save();
+    			console.log("room "+data[i].room+" saved!!");
+    		}
+    	}
+    	
+    	else{
+    		for(var i=0;i<data.length;i++){
+    			for(var j=0;j<room.length;j++){
+    				if(data[i].room==room[j]){
+    					break;
+    				}
 
+    			}
+    			
+    			if(j>room.length){//if the the room is not found
+        			var r=Room({
+        				room_name:data[i].room,
+        				chats:[]
+        			});
+        			r.save();
+    			}
+    		}
+    	}
+    });
+    res.json({nsg:"response"});
+next();
+});
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//saving messages
+/////////////////////////////////////////////////////////////////////////////////////////////////
+app.post("/saveMessage",jsonParser,function(req,res,next){
+	
+	var data=req.body;
+	
+	var chats=[];
+	
+	var isFound=false;//if the message already exist
+	console.log(data);
+	
+	Room.find({room_name:data.room},function(err,rooms){
+		if(rooms[0].chats!=null || rooms[0].chats.length>0)
+			for(var i=0;i<rooms[0].chats.length;i++){
+				chats.push(rooms[0].chats[i]);
+				if(data.from==rooms[0].chats[i].from && data.id==rooms[0].chats[i].id)
+					isFound=true;
+			}
+		
+		if(!isFound)
+		chats.push(data);
+		
+		Room.update({room_name:data.room},{$set:{chats:chats}},function(err,rooms){
+			if(err) throw err;
+			
+		});	
+	});
+	
+
+	next();
+});
+///////////////////////////////////////////////////////////////////////////////////////////////
+//update message state
+//////////////////////////////////////////////////////////////////////////////////////////////
+app.post("/updateMessageState",jsonParser,function(req,res,next){
+	
+	var data=req.body;
+	
+	var chats=[];
+	
+
+	
+	Room.find({room_name:data.room},function(err,rooms){
+		if(err) throw err;
+		console.log("updating message id "+data.id);
+		if(rooms[0].chats!=null || rooms[0].chats.length>0){
+			for(var i=0;i<rooms[0].chats.length;i++){
+				if(rooms[0].chats[i].id==data.id && rooms[0].chats[i].from==data.from){
+					rooms[0].chats[i].state=data.state;
+					console.log(rooms[0].chats[i] +" "+data.state);
+					Room.update({room_name:data.room},{$set:{chats:rooms[0].chats}},function(err,rooms){
+						if(err) throw err;
+						res.json([{msg:"successful"}]);
+						next();
+					});
+					break;
+				}
+					
+			}
+		}
+		
+	});
+	
+	
+});
+///////////////////////////////////////////////////////////////////////////////////////////////
+//request the unacknowledged messages and update Them
+//////////////////////////////////////////////////////////////////////////////////////////////
+app.post("/getUnAcknowlegedMessages",jsonParser,function(req,res,next){
+	var data=req.body;
+	var messages=[];
+	var user=data[0];
+	var chats=[];
+
+	Room.find({},function(err,room){
+		if(err) throw err;
+		console.log("data sent from client "+data[1].rooms);
+          if(room!=null || room.length==0){
+        	  for(var i=0;i<data[1].rooms.length;i++){
+        		  for(var j=0;j<room.length;j++){
+        			
+        			 if(data[1].rooms[i]==room[j].room_name && room[j].chats!=null){
+        				 for(var k=0;k<room[j].chats.length;k++){
+        					 if(room[j].chats[k].from==user && room[j].chats[k].state==0){
+        						messages.push(room[j].chats[k].id);
+        						room[j].chats[k].state=1;
+        						console.log("changing message "+room[j].chats[k].id+" to state "+room[j].chats[k].state);
+        						 console.log(data[1].rooms[i]);
+                				 Room.update({room_name:data[1].rooms[i]},{$set:{chats:room[j].chats}},function(err,rooms){
+                					 if(err) throw err;
+                					 console.log("the changed rooms are "+rooms);
+                				 });
+        					 }
+        					 
+        			
+        				 }
+        			     
+        			
+        				
+        			 } 
+        			 chats=[];
+        		  }
+        	  }
+        	   	console.log(messages);
+              	res.json([{msg:messages}]);  
+              	next();
+          }
+          else{
+        	  next();
+          }
+   
+	});
+
+  
+});
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+//request the unsent messages  and update Them
+//////////////////////////////////////////////////////////////////////////////////////////////
+app.post("/getUnSentMessages",jsonParser,function(req,res,next){
+	var data=req.body;
+	var messages=[];
+	var user=data[0];
+	var chats=[];
+
+	Room.find({},function(err,room){
+		if(err) throw err;
+		console.log("data sent from client "+data[1].rooms);
+        if(room!=null || room.length==0){
+      	  for(var i=0;i<data[1].rooms.length;i++){
+      		  for(var j=0;j<room.length;j++){
+      			
+      			 if(data[1].rooms[i]==room[j].room_name && room[j].chats!=null){
+      				 for(var k=0;k<room[j].chats.length;k++){
+      					 if(room[j].chats[k].from!=user && room[j].chats[k].state==1){
+      						messages.push(room[j].chats[k]);
+      						room[j].chats[k].state=2;
+      						console.log("changing message "+room[j].chats[k].id+" to state "+room[j].chats[k].state);
+      						 console.log(data[1].rooms[i]);
+              				 Room.update({room_name:data[1].rooms[i]},{$set:{chats:room[j].chats}},function(err,rooms){
+              					 if(err) throw err;
+              					 console.log("the changed rooms are "+rooms);
+              				 });
+      					 }
+      			
+      				 }
+      			     
+      			
+      				
+      			 } 
+      			 chats=[];
+      		  }
+      	  }
+      	   	console.log("This messages will be sent "+messages);
+            	res.json([{"msg":messages}]);  
+            	next();
+        }
+        else{
+      	  next();
+        }
+ 
+	});
+
+
+});
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 app.listen(port);
