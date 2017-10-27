@@ -14,8 +14,8 @@ var PASSWORD_MONGO=process.env.MONGODB_PASSWORD || "password" ;
 //making the connections\
 /*'mongodb://'+USERNAME_MONGO+':'+PASSWORD_MONGO+'@'+MONGO_URL*/
 //
-mongoose.connect("mongodb://bintouch007:123456@ds129004.mlab.com:29004/bitdb@mongodb/sampledb",function (error) {
-    if(error){console.log("error and shit");}
+mongoose.connect("localhost:27017/db",function (error) {
+    if(error){console.log("error connecting mongodb!!!.");}
     else{
 
         console.log("connected!! ");
@@ -292,7 +292,7 @@ app.post("/saveMessage",jsonParser,function(req,res,next){
 	console.log(data);
 	
 	Room.find({room_name:data.room},function(err,rooms){
-		if(rooms[0].chats!=null || rooms[0].chats.length>0)
+		if( rooms!=null && rooms[0]!=null && rooms[0].chats.length>0)
 			for(var i=0;i<rooms[0].chats.length;i++){
 				chats.push(rooms[0].chats[i]);
 				if(data.from==rooms[0].chats[i].from && data.id==rooms[0].chats[i].id)
@@ -304,6 +304,8 @@ app.post("/saveMessage",jsonParser,function(req,res,next){
 		
 		Room.update({room_name:data.room},{$set:{chats:chats}},function(err,rooms){
 			if(err) throw err;
+			else
+				console.log("message saved!!");
 			
 		});	
 	});
@@ -325,15 +327,15 @@ app.post("/updateMessageState",jsonParser,function(req,res,next){
 	Room.find({room_name:data.room},function(err,rooms){
 		if(err) throw err;
 		console.log("updating message id "+data.id);
-		if(rooms[0].chats!=null || rooms[0].chats.length>0){
+		if(rooms!=null && rooms[0]!=null && rooms[0].chats!=null && rooms[0].chats.length>0){
 			for(var i=0;i<rooms[0].chats.length;i++){
-				if(rooms[0].chats[i].id==data.id && rooms[0].chats[i].from==data.from){
+				if(rooms[0].chats[i].id==data.id){
 					rooms[0].chats[i].state=data.state;
 					console.log(rooms[0].chats[i] +" "+data.state);
 					Room.update({room_name:data.room},{$set:{chats:rooms[0].chats}},function(err,rooms){
 						if(err) throw err;
 						res.json([{msg:"successful"}]);
-						next();
+				
 					});
 					break;
 				}
@@ -384,7 +386,7 @@ app.post("/getUnAcknowlegedMessages",jsonParser,function(req,res,next){
         		  }
         	  }
         	   	console.log(messages);
-              	res.json([{msg:messages}]);  
+        	   	res.json([{msg:messages}]);
               	next();
           }
           else{
@@ -436,7 +438,7 @@ app.post("/getUnSentMessages",jsonParser,function(req,res,next){
       		  }
       	  }
       	   	console.log("This messages will be sent "+messages);
-            	res.json([{"msg":messages}]);  
+      	  res.json([{msg:messages}]);
             	next();
         }
         else{
