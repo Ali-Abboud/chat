@@ -14,7 +14,7 @@ var PASSWORD_MONGO=process.env.MONGODB_PASSWORD || "password" ;
 //making the connections\
 /*'mongodb://'+USERNAME_MONGO+':'+PASSWORD_MONGO+'@'+MONGO_URL*/
 //
-mongoose.connect("localhost:27017/db",function (error) {
+mongoose.connect("mongodb://bintouch007:123456@ds129004.mlab.com:29004/bitdb@mongodb/sampledb",function (error) {
     if(error){console.log("error connecting mongodb!!!.");}
     else{
 
@@ -256,7 +256,7 @@ app.post("/saveRoom",jsonParser,function(req,res,next){
     			console.log("room "+data[i].room+" saved!!");
     		}
     	}
-    	
+
     	else{
     		for(var i=0;i<data.length;i++){
     			for(var j=0;j<room.length;j++){
@@ -265,7 +265,7 @@ app.post("/saveRoom",jsonParser,function(req,res,next){
     				}
 
     			}
-    			
+
     			if(j>room.length){//if the the room is not found
         			var r=Room({
         				room_name:data[i].room,
@@ -283,14 +283,14 @@ next();
 //saving messages
 /////////////////////////////////////////////////////////////////////////////////////////////////
 app.post("/saveMessage",jsonParser,function(req,res,next){
-	
+
 	var data=req.body;
-	
+
 	var chats=[];
-	
+
 	var isFound=false;//if the message already exist
 	console.log(data);
-	
+
 	Room.find({room_name:data.room},function(err,rooms){
 		if( rooms!=null && rooms[0]!=null && rooms[0].chats.length>0)
 			for(var i=0;i<rooms[0].chats.length;i++){
@@ -298,18 +298,18 @@ app.post("/saveMessage",jsonParser,function(req,res,next){
 				if(data.from==rooms[0].chats[i].from && data.id==rooms[0].chats[i].id)
 					isFound=true;
 			}
-		
+
 		if(!isFound)
 		chats.push(data);
-		
+
 		Room.update({room_name:data.room},{$set:{chats:chats}},function(err,rooms){
 			if(err) throw err;
 			else
 				console.log("message saved!!");
-			
-		});	
+
+		});
 	});
-	
+
 
 	next();
 });
@@ -317,13 +317,13 @@ app.post("/saveMessage",jsonParser,function(req,res,next){
 //update message state
 //////////////////////////////////////////////////////////////////////////////////////////////
 app.post("/updateMessageState",jsonParser,function(req,res,next){
-	
-	var data=req.body;
-	
-	var chats=[];
-	
 
-	
+	var data=req.body;
+
+	var chats=[];
+
+
+
 	Room.find({room_name:data.room},function(err,rooms){
 		if(err) throw err;
 		console.log("updating message id "+data.id);
@@ -335,17 +335,17 @@ app.post("/updateMessageState",jsonParser,function(req,res,next){
 					Room.update({room_name:data.room},{$set:{chats:rooms[0].chats}},function(err,rooms){
 						if(err) throw err;
 						res.json([{msg:"successful"}]);
-				
+
 					});
 					break;
 				}
-					
+
 			}
 		}
-		
+
 	});
-	
-	
+
+
 });
 ///////////////////////////////////////////////////////////////////////////////////////////////
 //request the unacknowledged messages and update Them
@@ -362,7 +362,7 @@ app.post("/getUnAcknowlegedMessages",jsonParser,function(req,res,next){
           if(room!=null || room.length==0){
         	  for(var i=0;i<data[1].rooms.length;i++){
         		  for(var j=0;j<room.length;j++){
-        			
+
         			 if(data[1].rooms[i]==room[j].room_name && room[j].chats!=null){
         				 for(var k=0;k<room[j].chats.length;k++){
         					 if(room[j].chats[k].from==user && room[j].chats[k].state==0){
@@ -375,13 +375,13 @@ app.post("/getUnAcknowlegedMessages",jsonParser,function(req,res,next){
                 					 console.log("the changed rooms are "+rooms);
                 				 });
         					 }
-        					 
-        			
+
+
         				 }
-        			     
-        			
-        				
-        			 } 
+
+
+
+        			 }
         			 chats=[];
         		  }
         	  }
@@ -392,10 +392,10 @@ app.post("/getUnAcknowlegedMessages",jsonParser,function(req,res,next){
           else{
         	  next();
           }
-   
+
 	});
 
-  
+
 });
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -415,7 +415,7 @@ app.post("/getUnSentMessages",jsonParser,function(req,res,next){
         if(room!=null || room.length==0){
       	  for(var i=0;i<data[1].rooms.length;i++){
       		  for(var j=0;j<room.length;j++){
-      			
+
       			 if(data[1].rooms[i]==room[j].room_name && room[j].chats!=null){
       				 for(var k=0;k<room[j].chats.length;k++){
       					 if(room[j].chats[k].from!=user && room[j].chats[k].state==1){
@@ -428,12 +428,12 @@ app.post("/getUnSentMessages",jsonParser,function(req,res,next){
               					 console.log("the changed rooms are "+rooms);
               				 });
       					 }
-      			
+
       				 }
-      			     
-      			
-      				
-      			 } 
+
+
+
+      			 }
       			 chats=[];
       		  }
       	  }
@@ -444,7 +444,7 @@ app.post("/getUnSentMessages",jsonParser,function(req,res,next){
         else{
       	  next();
         }
- 
+
 	});
 
 
