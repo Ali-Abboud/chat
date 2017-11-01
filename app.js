@@ -243,7 +243,7 @@ app.post('/checkingContacts',jsonParser,function (req,res,next) {
 app.post("/saveRoom",jsonParser,function(req,res,next){
     var data=req.body;
     var i=0;
-    console.log(data);
+    console.log("rooms are sent "+data);
     Room.find({},function(err,room){
     	if(err) throw err;
     	else if(room.length==0){//if the database is empty with no rooms
@@ -259,24 +259,28 @@ app.post("/saveRoom",jsonParser,function(req,res,next){
 
     	else{
     		for(var i=0;i<data.length;i++){
+    			var isfound=0;
     			for(var j=0;j<room.length;j++){
     				if(data[i].room==room[j]){
+    					isfound=1;
+
     					break;
     				}
 
     			}
 
-    			if(j>room.length){//if the the room is not found
+    			if(isfound==0){//if the the room is not found
         			var r=Room({
         				room_name:data[i].room,
         				chats:[]
         			});
         			r.save();
+        			console.log("room "+data[i].room+" saved!!");
     			}
     		}
     	}
     });
-    res.json({nsg:"response"});
+    res.json({msg:"response"});
 next();
 });
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -285,6 +289,7 @@ next();
 app.post("/saveMessage",jsonParser,function(req,res,next){
 
 	var data=req.body;
+
 
 	var chats=[];
 
