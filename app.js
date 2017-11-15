@@ -14,7 +14,7 @@ var PASSWORD_MONGO=process.env.MONGODB_PASSWORD || "password" ;
 //making the connections\
 /*'mongodb://'+USERNAME_MONGO+':'+PASSWORD_MONGO+'@'+MONGO_URL*/
 //
-mongoose.connect("mongodb://bintouch007:123456@ds129004.mlab.com:29004/bitdb@mongodb/sampledb",function (error) {
+mongoose.connect("mongodb://bintouch007:123456@ds129004.mlab.com:29004/bitdb@mongodb/bitdb",function (error) {
     if(error){console.log("error connecting mongodb!!!.");}
     else{
 
