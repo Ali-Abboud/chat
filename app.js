@@ -260,10 +260,12 @@ app.post("/saveRoom",jsonParser,function(req,res,next){
     	else{
     		for(var i=0;i<data.length;i++){
     			var isfound=0;
+    			
     			for(var j=0;j<room.length;j++){
-    				if(data[i].room==room[j]){
+    		
+    				if(data[i].room==room[j].room_name){
     					isfound=1;
-
+    					console.log(room[j] +" is found! ");
     					break;
     				}
 
