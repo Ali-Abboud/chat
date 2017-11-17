@@ -293,11 +293,11 @@ app.post("/saveMessage",jsonParser,function(req,res,next){
 	var chats=[];
 
 	var isFound=false;//if the message already exist
-	console.log(data);
 
 	Room.find({room_name:data.room},function(err,rooms){
-		if( rooms!=null && rooms[0]!=null && rooms[0].chats.length>0)
+		if( rooms!=null && rooms[0]!=null && rooms[0].chats.length>0){
 			for(var i=0;i<rooms[0].chats.length;i++){
+        console.log("pushing messages to room "+rooms[0]);
 				chats.push(rooms[0].chats[i]);
 				if(data.from==rooms[0].chats[i].from && data.id==rooms[0].chats[i].id)
 					isFound=true;
@@ -310,12 +310,15 @@ app.post("/saveMessage",jsonParser,function(req,res,next){
 			if(err) throw err;
 			else
 				console.log("message saved!!");
+        next();
 
 		});
+}
+
 	});
 
 
-	next();
+
 });
 ///////////////////////////////////////////////////////////////////////////////////////////////
 //update message state
