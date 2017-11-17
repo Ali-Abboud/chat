@@ -197,7 +197,6 @@ app.post('/checkingContacts',jsonParser,function (req,res,next) {
                  if(data[i].phone_number.length<=8){
                    data[i].phone_number="+961"+data[i].phone_number;
                  }
-                  console.log(data[i].phone_number);
                        var found=0;
                        var k=0;
                        while(k<foundIndex.length){
@@ -216,7 +215,7 @@ app.post('/checkingContacts',jsonParser,function (req,res,next) {
                 	 if(data[i].phone_number===clients[j].phone_number){
                           contacts.push({phone_number:data[i].phone_number,name:data[i].name});
                           foundIndex.push(data[i].phone_number);
-                          console.log("A number is found!!");
+
                           break;
                         }
                         j++;
