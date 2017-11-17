@@ -295,7 +295,7 @@ app.post("/saveMessage",jsonParser,function(req,res,next){
 	var isFound=false;//if the message already exist
 
 	Room.find({room_name:data.room},function(err,rooms){
-    if(err) throw err;
+    if(err) console.error("under room");
 		if( rooms!=null && rooms[0]!=null && rooms[0].chats.length>0)
 			for(var i=0;i<rooms[0].chats.length;i++){
         console.log("pushing messages to room "+rooms[0]);
@@ -308,7 +308,7 @@ app.post("/saveMessage",jsonParser,function(req,res,next){
 		chats.push(data);
 
 		Room.update({room_name:data.room},{$set:{chats:chats}},function(err,rooms){
-			if(err) throw err;
+			if(err) console.error("in the update");
 
 
 
