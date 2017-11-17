@@ -309,12 +309,16 @@ app.post("/saveMessage",jsonParser,function(req,res,next){
 
 		Room.update({room_name:data.room},{$set:{chats:chats}},function(err,rooms){
 			if(err) throw err;
-			else
+
+
+
+      else
       {
 				console.log("message saved!!");
         next();
       }
 		});
+
 
 
 	});
