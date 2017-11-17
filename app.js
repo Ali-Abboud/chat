@@ -422,43 +422,43 @@ app.post("/getUnSentMessages",jsonParser,function(req,res,next){
 	var user=data[0];
 	var chats=[];
 
-	Room.find({},function(err,room){
-		if(err) throw err;
-		console.log("data sent from client "+data[1].rooms);
-        if(room!=null || room.length==0){
-      	  for(var i=0;i<data[1].rooms.length;i++){
-      		  for(var j=0;j<room.length;j++){
-
-      			 if(data[1].rooms[i]==room[j].room_name && room[j].chats!=null){
-      				 for(var k=0;k<room[j].chats.length;k++){
-      					 if(room[j].chats[k].from!=user && room[j].chats[k].state==1){
-      						messages.push(room[j].chats[k]);
-      						room[j].chats[k].state=2;
-      						console.log("changing message "+room[j].chats[k].id+" to state "+room[j].chats[k].state);
-      						 console.log(data[1].rooms[i]);
-              				 Room.update({room_name:data[1].rooms[i]},{$set:{chats:room[j].chats}},function(err,rooms){
-              					 if(err) throw err;
-              					 console.log("the changed rooms are "+rooms);
-              				 });
-      					 }
-
-      				 }
-
-
-
-      			 }
-      			 chats=[];
-      		  }
-      	  }
-      	   	console.log("This messages will be sent "+messages);
-      	  res.json([{msg:messages}]);
-            	next();
-        }
-        else{
-      	  next();
-        }
-
-	});
+	// Room.find({},function(err,room){
+	// 	if(err) throw err;
+	// 	console.log("data sent from client "+data[1].rooms);
+  //       if(room!=null || room.length==0){
+  //     	  for(var i=0;i<data[1].rooms.length;i++){
+  //     		  for(var j=0;j<room.length;j++){
+  //
+  //     			 if(data[1].rooms[i]==room[j].room_name && room[j].chats!=null){
+  //     				 for(var k=0;k<room[j].chats.length;k++){
+  //     					 if(room[j].chats[k].from!=user && room[j].chats[k].state==1){
+  //     						messages.push(room[j].chats[k]);
+  //     						room[j].chats[k].state=2;
+  //     						console.log("changing message "+room[j].chats[k].id+" to state "+room[j].chats[k].state);
+  //     						 console.log(data[1].rooms[i]);
+  //             				 Room.update({room_name:data[1].rooms[i]},{$set:{chats:room[j].chats}},function(err,rooms){
+  //             					 if(err) throw err;
+  //             					 console.log("the changed rooms are "+rooms);
+  //             				 });
+  //     					 }
+  //
+  //     				 }
+  //
+  //
+  //
+  //     			 }
+  //     			 chats=[];
+  //     		  }
+  //     	  }
+  //     	   	console.log("This messages will be sent "+messages);
+      	  res.json([{msg:[]}]);
+  //           	next();
+  //       }
+  //       else{
+  //     	  next();
+  //       }
+  //
+	// });
 
 
 });
