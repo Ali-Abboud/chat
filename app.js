@@ -288,35 +288,35 @@ next();
 /////////////////////////////////////////////////////////////////////////////////////////////////
 app.post("/saveMessage",jsonParser,function(req,res,next){
 
-	var data=req.body;
-
-
-	var chats=[];
-
-	var isFound=false;//if the message already exist
-	console.log(data);
-
-	Room.find({room_name:data.room},function(err,rooms){
-		if( rooms!=null && rooms[0]!=null && rooms[0].chats.length>0)
-			for(var i=0;i<rooms[0].chats.length;i++){
-				chats.push(rooms[0].chats[i]);
-				if(data.from==rooms[0].chats[i].from && data.id==rooms[0].chats[i].id)
-					isFound=true;
-			}
-
-		if(!isFound)
-		chats.push(data);
-
-		Room.update({room_name:data.room},{$set:{chats:chats}},function(err,rooms){
-			if(err) throw err;
-			else
-				console.log("message saved!!");
-
-		});
-	});
-
-
-	next();
+	// var data=req.body;
+  //
+  //
+	// var chats=[];
+  //
+	// var isFound=false;//if the message already exist
+	// console.log(data);
+  //
+	// Room.find({room_name:data.room},function(err,rooms){
+	// 	if( rooms!=null && rooms[0]!=null && rooms[0].chats.length>0)
+	// 		for(var i=0;i<rooms[0].chats.length;i++){
+	// 			chats.push(rooms[0].chats[i]);
+	// 			if(data.from==rooms[0].chats[i].from && data.id==rooms[0].chats[i].id)
+	// 				isFound=true;
+	// 		}
+  //
+	// 	if(!isFound)
+	// 	chats.push(data);
+  //
+	// 	Room.update({room_name:data.room},{$set:{chats:chats}},function(err,rooms){
+	// 		if(err) throw err;
+	// 		else
+	// 			console.log("message saved!!");
+  //
+	// 	});
+	// });
+  //
+  //
+	// next();
 });
 ///////////////////////////////////////////////////////////////////////////////////////////////
 //update message state
