@@ -325,37 +325,37 @@ next();
 ///////////////////////////////////////////////////////////////////////////////////////////////
 //update message state (deprecated)
 //////////////////////////////////////////////////////////////////////////////////////////////
-// app.post("/updateMessageState",jsonParser,function(req,res,next){
-//
-// 	var data=req.body;
-//
-// 	var chats=[];
-//
-//
-//
-// 	Room.find({room_name:data.room},function(err,rooms){
-// 		if(err) throw err;
-// 		console.log("updating message id "+data.id);
-// 		if(rooms!=null && rooms[0]!=null && rooms[0].chats!=null && rooms[0].chats.length>0){
-// 			for(var i=0;i<rooms[0].chats.length;i++){
-// 				if(rooms[0].chats[i].id==data.id){
-// 					rooms[0].chats[i].state=data.state;
-// 					console.log(rooms[0].chats[i] +" "+data.state);
-// 					Room.update({room_name:data.room},{$set:{chats:rooms[0].chats}},function(err,rooms){
-// 						if(err) throw err;
-// 						res.json([{msg:"successful"}]);
-//
-// 					});
-// 					break;
-// 				}
-//
-// 			}
-// 		}
-//
-// 	});
-//
-//
-// });
+app.post("/updateMessageState",jsonParser,function(req,res,next){
+
+	var data=req.body;
+
+	var chats=[];
+
+
+
+	Room.find({room_name:data.room},function(err,rooms){
+		if(err) throw err;
+		console.log("updating message id "+data.id);
+		if(rooms!=null && rooms[0]!=null && rooms[0].chats!=null && rooms[0].chats.length>0){
+			for(var i=0;i<rooms[0].chats.length;i++){
+				if(rooms[0].chats[i].id==data.id){
+					rooms[0].chats[i].state=data.state;
+					console.log(rooms[0].chats[i] +" "+data.state);
+					Room.update({room_name:data.room},{$set:{chats:rooms[0].chats}},function(err,rooms){
+						if(err) throw err;
+						res.json([{msg:"successful"}]);
+
+					});
+					break;
+				}
+
+			}
+		}
+
+	});
+
+
+});
 ///////////////////////////////////////////////////////////////////////////////////////////////
 //request the unacknowledged messages and update Them
 //////////////////////////////////////////////////////////////////////////////////////////////
