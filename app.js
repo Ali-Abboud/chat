@@ -214,20 +214,22 @@ app.post('/checkingContacts',jsonParser,function (req,res,next) {
                  while (j<clients.length) {
 
                 	 if(data[i].phone_number===clients[j].phone_number){
-                          contacts.push({phone_number:data[i].phone_number,name:data[i].name});
+                          contacts.push({phone_number:data[i].phone_number,name:data[i].name,is_registered:true});
                           foundIndex.push(data[i].phone_number);
                           console.log("A number is found!!");
                           break;
                         }
                         j++;
                  }
+                 //if number not found then it is re
+                 if(j==clients.length){contacts.push({phone_number:data[i].phone_number,name:data[i].name,is_registered:false});}
                  i++;
                }
 
     		       console.log(contacts);
     		       res.json(contacts);
 
-    		}else{
+    		}  else{
     			console.log("No registered Numbers");
 
     		}
@@ -260,9 +262,9 @@ app.post("/saveRoom",jsonParser,function(req,res,next){
     	else{
     		for(var i=0;i<data.length;i++){
     			var isfound=0;
-    			
+
     			for(var j=0;j<room.length;j++){
-    		
+
     				if(data[i].room==room[j].room_name){
     					isfound=1;
     					console.log(room[j] +" is found! ");
