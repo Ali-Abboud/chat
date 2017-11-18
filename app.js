@@ -187,7 +187,7 @@ app.post('/checkingContacts',jsonParser,function (req,res,next) {
 	var data=req.body;
     var i=0;
     var j=0;
-
+    console.log("updated hecking contacts");
     var contacts=[];///for storing matched contacts
     var foundIndex=[];///for storing the index of matched so no doublicated numbers exists
     	Client.find({},function(err,clients){
