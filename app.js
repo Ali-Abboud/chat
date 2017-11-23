@@ -372,7 +372,7 @@ app.post("/getUnAcknowlegedMessages",jsonParser,function(req,res,next){
           if(room!=null || room.length==0){
         	  for(var i=0;i<data[2].rooms.length;i++){
         		  for(var j=0;j<room.length;j++){
-        			
+
         			 if(data[2].rooms[i]==room[j].room_name && room[j].chats!=null){
         				 for(var k=0;k<room[j].chats.length;k++){
         					 if(room[j].chats[k].from==user && room[j].chats[k].state==0 && room[j].chats[k].state==account){
@@ -385,13 +385,13 @@ app.post("/getUnAcknowlegedMessages",jsonParser,function(req,res,next){
                 					 console.log("the changed rooms are "+rooms);
                 				 });
         					 }
-        					 
-        			
+
+
         				 }
-        			     
-        			
-        				
-        			 } 
+
+
+
+        			 }
         			 chats=[];
         		  }
         	  }
@@ -402,10 +402,10 @@ app.post("/getUnAcknowlegedMessages",jsonParser,function(req,res,next){
           else{
         	  next();
           }
-   
+
 	});
 
-  
+
 });
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -427,7 +427,7 @@ app.post("/getUnSentMessages",jsonParser,function(req,res,next){
         if(room!=null || room.length==0){
       	  for(var i=0;i<data[2].rooms.length;i++){
       		  for(var j=0;j<room.length;j++){
-      			
+
       			 if(data[2].rooms[i]==room[j].room_name && room[j].chats!=null){
       				 for(var k=0;k<room[j].chats.length;k++){
       					 if(room[j].chats[k].from!=user && room[j].chats[k].state==1 && room[j].chats[k].account==account){
@@ -441,12 +441,12 @@ app.post("/getUnSentMessages",jsonParser,function(req,res,next){
               					 console.log("the changed rooms are "+rooms);
               				 });
       					 }
-      			
+
       				 }
-      			     
-      			
-      				
-      			 } 
+
+
+
+      			 }
       			 chats=[];
       		  }
       	  }
@@ -457,8 +457,40 @@ app.post("/getUnSentMessages",jsonParser,function(req,res,next){
         else{
       	  next();
         }
- 
+
 	});
+
+
+});
+/////////////////////////////////////////////////////////////////////////////
+////search by criteria
+////////////////////////////////////////////////////////////////////////////
+app.post("/searchByCriteria",jsonParser,function(req,res,next){
+    var criteria=req.body;
+    var result=[];
+    var re = new RegExp("^"+criteria.pattern, "");
+
+    Client.find({"secondary_account.user_name":{$regex:re}},function(err,clients){
+
+          if(clients.length>0){
+
+
+              res.json({res:clients});
+              next();
+          }else {
+
+         Client.find({"secondary_account.job":{$regex:re}},function(err,clients){
+        	 console.log(clients.length);
+
+                      res.json({res:clients});
+                      next();
+
+
+         });
+
+
+          }
+    });
 
 
 });
