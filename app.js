@@ -105,7 +105,7 @@ app.post('/register',jsonParser,function (req,res,next) {
 	     phone_number:data.phone_number,
 		 full_name:data.full_name,
 			token:"",
-			secondary_account:{	user_name:data.username,job:data.job}
+			secondary_account:{	user_name:data.username,job:data.job,company:data.company,email:data.email}
 
 
 	 });
@@ -144,6 +144,7 @@ app.post('/register',jsonParser,function (req,res,next) {
 	});
 
 		});
+
 
 
 app.post('/addMsg',jsonParser,function (req,res,next) {
@@ -479,11 +480,37 @@ app.post("/searchByCriteria",jsonParser,function(req,res,next){
               next();
           }else {
 
-         Client.find({"secondary_account.job":{$regex:re}},function(err,clients){
-        	 console.log(clients.length);
+         Client.find({"secondary_account.job":{$regex:re}},function(err,client1){
 
-                      res.json({res:clients});
+        	 if(client1.length>0){
+                      res.json({res:client1});
                       next();
+        	 }
+        	 else{
+        		 Client.find({"secondary_account.company":{$regex:re}},function(err,client2){
+
+        			 if(client2.length>0){
+                         res.json({res:client2});
+                         next();
+           	               }
+
+
+        			 else{
+        				 Client.find({"secondary_account.email":{$regex:re}},function(err,client3){
+
+                                 res.json({res:client3});
+                                 next();
+
+        				 });
+
+
+        			 }
+
+
+        		 });
+
+
+        	 }
 
 
          });
