@@ -522,5 +522,11 @@ app.post("/searchByCriteria",jsonParser,function(req,res,next){
 
 });
 
+
+app.post("/uploadFile",JsonParser,function(req,res,next){
+
+           console.log("File Uploaded!!");
+});
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 app.listen(port);
