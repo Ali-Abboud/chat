@@ -1,10 +1,5 @@
 
 
-var express=require('express');
-var    bodyParser = require('body-parser');
-var mongoose=require('mongoose');
-var jsonParser=bodyParser.json();
-
 var port=process.env.PORT_HTTP || 2999;
 var MONGO_URL=process.env.MONGO_URL || "127.0.0.1";
 var PORT_MONGO=process.env.MONGO_PORT || 27017 ;
@@ -14,6 +9,13 @@ var PASSWORD_MONGO=process.env.MONGODB_PASSWORD || "password" ;
 //making the connections\
 /*'mongodb://'+USERNAME_MONGO+':'+PASSWORD_MONGO+'@'+MONGO_URL*/
 //
+
+var express=require('express');
+var bodyParser = require('body-parser');
+var mongoose=require('mongoose');
+const fileUpload = require('express-fileupload');
+var jsonParser=bodyParser.json();
+
 mongoose.connect("mongodb://bintouch007:123456@ds129004.mlab.com:29004/bitdb@mongodb/bitdb",function (error) {
     if(error){console.log("error connecting mongodb!!!.");}
     else{
@@ -23,8 +25,6 @@ mongoose.connect("mongodb://bintouch007:123456@ds129004.mlab.com:29004/bitdb@mon
     }
 
 });
-
-
 //creating the shema for documents
 
 var Schema=mongoose.Schema;
@@ -146,7 +146,6 @@ app.post('/register',jsonParser,function (req,res,next) {
 		});
 
 
-
 app.post('/addMsg',jsonParser,function (req,res,next) {
 	var data=req.body;
 
@@ -238,7 +237,6 @@ app.post('/checkingContacts',jsonParser,function (req,res,next) {
 
 
 });
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -289,42 +287,42 @@ app.post("/saveRoom",jsonParser,function(req,res,next){
 next();
 });
 //////////////////////////////////////////////////////////////////////////////////////////////////
-//saving messages (deprecated)
+//saving messages
 /////////////////////////////////////////////////////////////////////////////////////////////////
-// app.post("/saveMessage",jsonParser,function(req,res,next){
-//
-// 	var data=req.body;
-//
-//
-// 	var chats=[];
-//
-// 	var isFound=false;//if the message already exist
-// 	console.log(data);
-//
-// 	Room.find({room_name:data.room},function(err,rooms){
-// 		if( rooms!=null && rooms[0]!=null && rooms[0].chats.length>0)
-// 			for(var i=0;i<rooms[0].chats.length;i++){
-// 				chats.push(rooms[0].chats[i]);
-// 				if(data.from==rooms[0].chats[i].from && data.id==rooms[0].chats[i].id)
-// 					isFound=true;
-// 			}
-//
-// 		if(!isFound)
-// 		chats.push(data);
-//
-// 		Room.update({room_name:data.room},{$set:{chats:chats}},function(err,rooms){
-// 			if(err) throw err;
-// 			else
-// 				console.log("message saved!!");
-//
-// 		});
-// 	});
-//
-//
-// 	next();
-// });
+app.post("/saveMessage",jsonParser,function(req,res,next){
+
+	var data=req.body;
+
+
+	var chats=[];
+
+	var isFound=false;//if the message already exist
+	console.log(data);
+
+	Room.find({room_name:data.room},function(err,rooms){
+		if( rooms!=null && rooms[0]!=null && rooms[0].chats.length>0)
+			for(var i=0;i<rooms[0].chats.length;i++){
+				chats.push(rooms[0].chats[i]);
+				if(data.from==rooms[0].chats[i].from && data.id==rooms[0].chats[i].id)
+					isFound=true;
+			}
+
+		if(!isFound)
+		chats.push(data);
+
+		Room.update({room_name:data.room},{$set:{chats:chats}},function(err,rooms){
+			if(err) throw err;
+			else
+				console.log("message saved!!");
+
+		});
+	});
+
+
+	next();
+});
 ///////////////////////////////////////////////////////////////////////////////////////////////
-//update message state (deprecated)
+//update message state
 //////////////////////////////////////////////////////////////////////////////////////////////
 app.post("/updateMessageState",jsonParser,function(req,res,next){
 
@@ -369,7 +367,6 @@ app.post("/getUnAcknowlegedMessages",jsonParser,function(req,res,next){
 
 	Room.find({},function(err,room){
 		if(err) throw err;
-		console.log("data sent from client "+data[2].rooms);
           if(room!=null || room.length==0){
         	  for(var i=0;i<data[2].rooms.length;i++){
         		  for(var j=0;j<room.length;j++){
@@ -379,11 +376,9 @@ app.post("/getUnAcknowlegedMessages",jsonParser,function(req,res,next){
         					 if(room[j].chats[k].from==user && room[j].chats[k].state==0 && room[j].chats[k].state==account){
         						messages.push(room[j].chats[k].id);
         						room[j].chats[k].state=1;
-        						console.log("changing message "+room[j].chats[k].id+" to state "+room[j].chats[k].state);
-        						 console.log(data[2].rooms[i]);
+
                 				 Room.update({room_name:data[2].rooms[i]},{$set:{chats:room[j].chats}},function(err,rooms){
                 					 if(err) throw err;
-                					 console.log("the changed rooms are "+rooms);
                 				 });
         					 }
 
@@ -424,7 +419,6 @@ app.post("/getUnSentMessages",jsonParser,function(req,res,next){
 
 	Room.find({},function(err,room){
 		if(err) throw err;
-		console.log("data sent from client "+data[2].rooms);
         if(room!=null || room.length==0){
       	  for(var i=0;i<data[2].rooms.length;i++){
       		  for(var j=0;j<room.length;j++){
@@ -432,14 +426,13 @@ app.post("/getUnSentMessages",jsonParser,function(req,res,next){
       			 if(data[2].rooms[i]==room[j].room_name && room[j].chats!=null){
       				 for(var k=0;k<room[j].chats.length;k++){
       					 if(room[j].chats[k].from!=user && room[j].chats[k].state==1 && room[j].chats[k].account==account){
-      						 console.log("message found!!");
       						messages.push(room[j].chats[k]);
       						room[j].chats[k].state=2;
-      						console.log("changing message "+room[j].chats[k].id+" to state "+room[j].chats[k].state);
+      					    
       						 console.log(data[2].rooms[i]);
               				 Room.update({room_name:data[2].rooms[i]},{$set:{chats:room[j].chats}},function(err,rooms){
               					 if(err) throw err;
-              					 console.log("the changed rooms are "+rooms);
+              				
               				 });
       					 }
 
@@ -451,7 +444,6 @@ app.post("/getUnSentMessages",jsonParser,function(req,res,next){
       			 chats=[];
       		  }
       	  }
-      	   	console.log("This messages will be sent "+messages);
       	  res.json([{msg:messages}]);
             	next();
         }
@@ -463,9 +455,8 @@ app.post("/getUnSentMessages",jsonParser,function(req,res,next){
 
 
 });
-/////////////////////////////////////////////////////////////////////////////
-////search by criteria
-////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
 app.post("/searchByCriteria",jsonParser,function(req,res,next){
     var criteria=req.body;
     var result=[];
@@ -523,10 +514,90 @@ app.post("/searchByCriteria",jsonParser,function(req,res,next){
 });
 
 
-app.post("/upload_audio",jsonParser,function(req,res,next){
 
-           console.log("File Uploaded!!");
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+var multipart = require('connect-multiparty');
+var multipartMiddleware = multipart();
+app.use(multipart({ uploadDir: ".\\uploads"}));
+app.post('/upload_audio', multipartMiddleware, function(req, resp) {
+
+
+
+ if(req.files){
+   var data=req.body;
+   var path=req.files.uploaded_File.path;
+		var data=req.body;
+		addAudioMessage({
+			id:data.id,
+			state:1,
+			account:"primary",
+			from:data.from,
+			type:"audio",
+      room:data.room,
+      content:path
+		},Room);
+	 resp.status(200).send("Uploaded!!!");
+   console.log("audio uploaded");
+ }
 });
 
+
+
+
+app.get('/downloads', function (req, res, next) {
+    var filePath = "./uploads/"; // Or format the path using the `id` rest param
+    var file = __dirname + "/uploads/bQmP1ew9srP0ZjfmSQ9mg-GR.jpg";; // file name  
+
+    res.download(file);
+  
+});
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+function addAudioMessage(message,Room){
+    var chats=[];
+	var isFound=false;//if the message already exist
+
+
+Room.find({room_name:message.room},function(err,rooms){
+		if( rooms!=null && rooms[0]!=null && rooms[0].chats.length>0)
+			for(var i=0;i<rooms[0].chats.length;i++){
+				chats.push(rooms[0].chats[i]);
+				console.log("pushing "+rooms[0].chats[i].content);
+				if(message.from==rooms[0].chats[i].from && message.id==rooms[0].chats[i].id)
+					isFound=true;
+			}
+
+		if(!isFound){
+    message.state=1;
+    console.log("before adding the message "+message);
+  chats.push(message);
+  }
+
+
+		Room.update({room_name:message.room},{$set:{chats:chats}},function(err,rooms){
+			if(err) throw err;
+			else
+				console.log("message saved!!");
+			console.log("after adding the message "+chats[0].id + " for "+rooms);
+
+		});
+	});
+
+}
+
+
+
+
+
+
+
+
+
+
+
 app.listen(port);
